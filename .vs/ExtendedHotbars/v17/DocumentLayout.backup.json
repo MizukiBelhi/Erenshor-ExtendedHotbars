@@ -1,0 +1,58 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "H:\\trt\\C\u002BProj\\ExtendedSkillSlots\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{659D4566-03D3-456A-9B71-AB51C239282E}|ExtendedHotbars.csproj|h:\\trt\\c\u002Bproj\\extendedskillslots\\extendedhotbars.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{659D4566-03D3-456A-9B71-AB51C239282E}|ExtendedHotbars.csproj|solutionrelative:extendedhotbars.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{659D4566-03D3-456A-9B71-AB51C239282E}|ExtendedHotbars.csproj|h:\\trt\\c\u002Bproj\\extendedskillslots\\hotkeyspatches.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{659D4566-03D3-456A-9B71-AB51C239282E}|ExtendedHotbars.csproj|solutionrelative:hotkeyspatches.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 2,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:8:0:{34c7837f-3b3a-449c-bdf0-bdad86cbaf4a}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "HotkeysPatches.cs",
+              "DocumentMoniker": "H:\\trt\\C\u002BProj\\ExtendedSkillSlots\\HotkeysPatches.cs",
+              "RelativeDocumentMoniker": "HotkeysPatches.cs",
+              "ToolTip": "H:\\trt\\C\u002BProj\\ExtendedSkillSlots\\HotkeysPatches.cs",
+              "RelativeToolTip": "HotkeysPatches.cs",
+              "ViewState": "AgIAAGwBAAAAAAAAAAAtwLUAAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-29T15:47:16.688Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ExtendedHotbars.cs",
+              "DocumentMoniker": "H:\\trt\\C\u002BProj\\ExtendedSkillSlots\\ExtendedHotbars.cs",
+              "RelativeDocumentMoniker": "ExtendedHotbars.cs",
+              "ToolTip": "H:\\trt\\C\u002BProj\\ExtendedSkillSlots\\ExtendedHotbars.cs",
+              "RelativeToolTip": "ExtendedHotbars.cs",
+              "ViewState": "AgIAAEEBAAAAAAAAAAAewGUBAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-29T16:40:16.052Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
