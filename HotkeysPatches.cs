@@ -220,8 +220,6 @@ namespace ExtendedHotbars
 							hk.Cooldown = 2f;
 						}
 
-						ExtendedHotbarsPlugin._logger.LogInfo($"isha shpell {flag} {hk.Cooldown}");
-
 					}
 					else if (hk.AssignedSpell.Type == Spell.SpellType.Misc)
 					{
@@ -235,7 +233,6 @@ namespace ExtendedHotbars
 						{
 							hk.Cooldown = 2f;
 						}
-						ExtendedHotbarsPlugin._logger.LogInfo($"isha misc shpell {flag} {hk.Cooldown}");
 					}
 					else
 					{
@@ -269,7 +266,6 @@ namespace ExtendedHotbars
 					hk.Cooldown = 2f;
 				}
 
-				ExtendedHotbarsPlugin._logger.LogInfo($"isha shkil {flag2} {hk.Cooldown}");
 				if (flag2)
 				{
 					hk.Cooldown = hk.AssignedSkill.Cooldown;
@@ -278,7 +274,6 @@ namespace ExtendedHotbars
 				{
 					hk.Cooldown = 2f;
 				}
-				ExtendedHotbarsPlugin._logger.LogInfo($"isha shkil agian {flag2} {hk.Cooldown}");
 			}
 
 			if (!(hk.AssignedItem != null) || hk.thisHK != Hotkeys.HKType.Item || !(hk.Cooldown <= 0f))
