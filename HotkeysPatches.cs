@@ -187,55 +187,75 @@ namespace ExtendedHotbars
 		{
 			var hk = __instance;
 			string hkSID = ExtendedHotbarsPlugin.getHKSkillId(__instance);
-			ExtendedHotbarsPlugin._logger.LogInfo($"CustomHotkeyTask {hk.Cooldown}");
+			//ExtendedHotbarsPlugin._logger.LogInfo($"CustomHotkeyTask {hk.Cooldown}");
 			if (hk.AssignedSpell != null && hk.thisHK == Hotkeys.HKType.Spell && hk.Cooldown <= 0f)
 			{
 				if (GameData.PlayerControl.GetComponent<CastSpell>().KnownSpells.Contains(hk.AssignedSpell))
 				{
-					bool flag = false;
 					if (GameData.PlayerControl.CurrentTarget != null && !hk.AssignedSpell.SelfOnly && hk.AssignedSpell.Type != Spell.SpellType.Misc)
 					{
-						flag = hk.PlayerSpells.StartSpell(hk.AssignedSpell, GameData.PlayerControl.CurrentTarget.MyStats);
-					}
-					else if (hk.AssignedSpell.SelfOnly && hk.AssignedSpell.Type != Spell.SpellType.Misc)
-					{
-						Character character = ((!(GameData.PlayerControl.CurrentTarget == null)) ? GameData.PlayerControl.CurrentTarget : GameData.PlayerControl.Myself);
-						if (character.MyFaction != 0)
-						{
-							character = GameData.PlayerControl.Myself;
-							flag = hk.PlayerSpells.StartSpell(hk.AssignedSpell, character.MyStats);
-						}
-						else
-						{
-							flag = hk.PlayerSpells.StartSpell(hk.AssignedSpell, character.MyStats);
-						}
-
-
-						if (flag)
-						{
-							hk.Cooldown = hk.AssignedSpell.Cooldown * 60f;
-						}
-						else if (hk.Cooldown < 2f)
-						{
-							hk.Cooldown = 2f;
-						}
-
-					}
-					else if (hk.AssignedSpell.Type == Spell.SpellType.Misc)
-					{
-						flag = hk.PlayerSpells.StartSpell(hk.AssignedSpell, null);
-
-						if (flag)
-						{
-							hk.Cooldown = hk.AssignedSpell.Cooldown * 60f;
-						}
-						else if (hk.Cooldown < 2f)
-						{
-							hk.Cooldown = 2f;
-						}
+						bool flag = hk.PlayerSpells.StartSpell(hk.AssignedSpell, GameData.PlayerControl.CurrentTarget.MyStats);
 					}
 					else
 					{
+						if (hk.AssignedSpell.SelfOnly && hk.AssignedSpell.Type != Spell.SpellType.Misc)
+						{
+							Character character;
+							if (GameData.PlayerControl.CurrentTarget == null)
+							{
+								character = GameData.PlayerControl.Myself;
+							}
+							else
+							{
+								character = GameData.PlayerControl.CurrentTarget;
+							}
+							bool flag;
+							if (character.MyFaction != Character.Faction.Player)
+							{
+								character = GameData.PlayerControl.Myself;
+								flag = hk.PlayerSpells.StartSpell(hk.AssignedSpell, character.MyStats);
+							}
+							else
+							{
+								flag = hk.PlayerSpells.StartSpell(hk.AssignedSpell, character.MyStats);
+							}
+							using (List<Hotkeys>.Enumerator enumerator = GameData.GM.HKManager.AllHotkeys.GetEnumerator())
+							{
+								while (enumerator.MoveNext())
+								{
+									Hotkeys hotkeys = enumerator.Current;
+									if (hotkeys.AssignedSpell == hk.AssignedSpell && flag)
+									{
+										hotkeys.Cooldown = hk.AssignedSpell.Cooldown * 60f;
+									}
+									else if (hotkeys.Cooldown < 2f)
+									{
+										hotkeys.Cooldown = 2f;
+									}
+								}
+								goto IL_279;
+							}
+						}
+						if (hk.AssignedSpell.Type == Spell.SpellType.Misc)
+						{
+							bool flag = hk.PlayerSpells.StartSpell(hk.AssignedSpell, null);
+							using (List<Hotkeys>.Enumerator enumerator = GameData.GM.HKManager.AllHotkeys.GetEnumerator())
+							{
+								while (enumerator.MoveNext())
+								{
+									Hotkeys hotkeys2 = enumerator.Current;
+									if (hotkeys2.AssignedSpell == hk.AssignedSpell && flag)
+									{
+										hotkeys2.Cooldown = hk.AssignedSpell.Cooldown * 60f;
+									}
+									else if (hotkeys2.Cooldown < 2f)
+									{
+										hotkeys2.Cooldown = 2f;
+									}
+								}
+								goto IL_279;
+							}
+						}
 						UpdateSocialLog.CombatLogAdd("You must select a target for this spell!", "lightblue");
 					}
 				}
@@ -244,7 +264,7 @@ namespace ExtendedHotbars
 					UpdateSocialLog.LogAdd("This spell has been removed from the game.", "yellow");
 				}
 			}
-
+			IL_279:
 			if (hk.AssignedSkill != null && hk.thisHK == Hotkeys.HKType.Skill && hk.Cooldown <= 0f)
 			{
 				bool flag2 = false;
@@ -256,16 +276,17 @@ namespace ExtendedHotbars
 				{
 					hk.PlayerSkills.MyFishing.StartFishing();
 				}
-
-				if (flag2)
+				foreach (Hotkeys hotkeys3 in GameData.GM.HKManager.AllHotkeys)
 				{
-					hk.Cooldown = hk.AssignedSkill.Cooldown * 60f;
+					if (hotkeys3.AssignedSkill == hk.AssignedSkill && flag2)
+					{
+						hotkeys3.Cooldown = hk.AssignedSkill.Cooldown * 60f;
+					}
+					else if (hotkeys3.Cooldown < 2f)
+					{
+						hotkeys3.Cooldown = 2f;
+					}
 				}
-				else if (hk.Cooldown < 2f)
-				{
-					hk.Cooldown = 2f;
-				}
-
 				if (flag2)
 				{
 					hk.Cooldown = hk.AssignedSkill.Cooldown;
@@ -275,34 +296,30 @@ namespace ExtendedHotbars
 					hk.Cooldown = 2f;
 				}
 			}
-
-			if (!(hk.AssignedItem != null) || hk.thisHK != Hotkeys.HKType.Item || !(hk.Cooldown <= 0f))
+			if (hk.AssignedItem != null && hk.thisHK == Hotkeys.HKType.Item && hk.Cooldown <= 0f)
 			{
-				return;
-			}
-
-			if (hk.AssignedItem.MyItem.ItemEffectOnClick != null)
-			{
-				hk.AssignedItem.UseConsumable();
-				if (hk.AssignedItem.Quantity <= 0 || hk.AssignedItem.MyItem == GameData.PlayerInv.Empty)
+				if (hk.AssignedItem.MyItem.ItemEffectOnClick != null)
 				{
-					hk.ClearMe();
+					hk.AssignedItem.UseConsumable();
+					if (hk.AssignedItem.Quantity <= 0 || hk.AssignedItem.MyItem == GameData.PlayerInv.Empty)
+					{
+						hk.ClearMe();
+					}
 				}
-			}
-
-			if (hk.AssignedItem != null && hk.AssignedItem.MyItem.ItemSkillUse != null)
-			{
-				hk.AssignedItem.UseSkill();
+				if (hk.AssignedItem != null && hk.AssignedItem.MyItem.ItemSkillUse != null)
+				{
+					hk.AssignedItem.UseSkill();
+				}
 			}
 
 
 			//First update the default bar
-			foreach (var _hk in GameData.GM.HKManager.AllHotkeys)
+			/*foreach (var _hk in GameData.GM.HKManager.AllHotkeys)
 			{
 				string _hkSID = ExtendedHotbarsPlugin.getHKSkillId(_hk);
 				if (_hk != __instance && _hkSID == hkSID)
 					_hk.Cooldown = hk.Cooldown;
-			}
+			}*/
 			//Now update our custom bars
 			foreach (var bar in ExtendedHotbarsPlugin.additionalHotbars)
 			{

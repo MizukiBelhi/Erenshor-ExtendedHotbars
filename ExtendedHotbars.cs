@@ -16,7 +16,7 @@ using UnityEngine.SceneManagement;
 
 namespace ExtendedHotbars
 {
-	[BepInPlugin("mizuki.ehb", "Extended Hotbars", "1.0.0")]
+	[BepInPlugin("mizuki.ehb", "Extended Hotbars", "1.0.1")]
 	public class ExtendedHotbarsPlugin : BaseUnityPlugin
 	{
 		//Dictionary<int, Hotkeys> hotkeyList = new Dictionary<int, Hotkeys>();
