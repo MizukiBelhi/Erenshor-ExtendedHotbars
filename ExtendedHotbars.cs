@@ -16,7 +16,7 @@ using UnityEngine.SceneManagement;
 
 namespace ExtendedHotbars
 {
-	[BepInPlugin("mizuki.ehb", "Extended Hotbars", "1.0.1")]
+	[BepInPlugin("mizuki.ehb", "Extended Hotbars", "1.0.2")]
 	public class ExtendedHotbarsPlugin : BaseUnityPlugin
 	{
 		//Dictionary<int, Hotkeys> hotkeyList = new Dictionary<int, Hotkeys>();
@@ -30,6 +30,7 @@ namespace ExtendedHotbars
 
 		public static int lastCharSlot = -1;
 
+		public static ConfigEntry<bool> hideNumbers;
 		public static ConfigEntry<int> maxHotkeyBars;
 		public static ConfigEntry<KeyboardShortcut> ExtendBarHotkey;
 
@@ -124,6 +125,13 @@ namespace ExtendedHotbars
 
 		public void InitConfig()
 		{
+			hideNumbers = Config.Bind<bool>(
+				"General",
+				"Hide Numbers",
+				true,
+				"Hides numbers on the hotbars (only extended)"
+			);
+
 			maxHotkeyBars = Config.Bind<int>(
 				"General",
 				"Max Hotbars",
@@ -224,7 +232,7 @@ namespace ExtendedHotbars
 		public static void LoadAdditionalBars()
 		{
 			if (!HasFlag) return;
-			Vector3 offset = new Vector3(0, (CurrentCharData.visibleBars - 1) * 70, 0);
+			Vector3 offset = new Vector3(0, (CurrentCharData.visibleBars - 1) * 30, 0);
 
 			//Move
 			foreach (Transform t in easyMoveObjects)
@@ -234,6 +242,7 @@ namespace ExtendedHotbars
 			Vector3[] savedPositions = xpObjects.Select(x => x.position).ToArray();
 
 			vitalsContainer.transform.localPosition = _defaultPositions[vitalsContainer.GetInstanceID()] + offset;
+			statusBar.localPosition = _defaultPositions[statusBar.GetInstanceID()] + new Vector3(0, (CurrentCharData.visibleBars - 1) * 60, 0);
 
 			for (int i = 0; i < xpObjects.Count; i++)
 				xpObjects[i].position = savedPositions[i];
@@ -251,7 +260,7 @@ namespace ExtendedHotbars
 			isDoingLoad = true;
 			for (int i = 1; i < CurrentCharData.visibleBars; i++)
 			{
-				Vector3 barOffset = new Vector3(0, (i) * 70, 0);
+				Vector3 barOffset = new Vector3(0, (i) * 60, 0);
 				Transform newBar = Instantiate(hotbarBG, hotbarContainer, true);
 				Transform hotkeyTransform = Instantiate(hotkeyContainer, hotbarContainer, true);
 				//Destroy those pesky children!
@@ -279,7 +288,7 @@ namespace ExtendedHotbars
 					//newHK.SetParent(newBar, false);
 					var scale = hotkey1.localScale;
 					newHK.localScale = scale;
-					newHK.localPosition += new Vector3(j * 70, 0, 0);
+					newHK.localPosition += new Vector3(j * 56, 0, 0);
 					var hk = newHK.GetComponent<Hotkeys>();
 					hotbar.hotkeys.Add(j, hk);
 					hk.ClearMe();
@@ -292,6 +301,8 @@ namespace ExtendedHotbars
 						numTxt = 0;
 
 					hkTxt.text = numTxt.ToString();
+					if (hideNumbers.Value == true)
+						hkTxt.text = "";
 					TMPro.TMP_Text _buttonText = hk.GetComponentInChildren<TMPro.TMP_Text>();
 
 					ConfigEntry<KeyboardShortcut> hkShortcut = hotKeyData[j];
@@ -300,9 +311,13 @@ namespace ExtendedHotbars
 					//var modK = hkShortcut.Value.Modifiers;
 
 					var KLabel = ToShortcutLabel(hkShortcut.Value);
-					
-					if (_buttonText != null )
+
+					if (_buttonText != null)
+					{
 						_buttonText.text = $"{KLabel}";
+						var rt = _buttonText.GetComponent<RectTransform>();
+						rt.sizeDelta = new Vector2(30, 15);
+					}
 
 					//check if we have hotbar for this saved
 					if (hasBar)
@@ -386,7 +401,8 @@ namespace ExtendedHotbars
 		private static List<Transform> easyMoveObjects = new List<Transform>();
 
 		private static Transform hotbarBG;
-		
+		private static Transform statusBar;
+
 		public static void GetHotbarObjects()
 		{
 			if (hasLoadedHotbar) return;
@@ -414,10 +430,10 @@ namespace ExtendedHotbars
 			if (xptxt == null) { _logger.LogError("[EHB] No XPPct."); return; };
 
 			//get Image (2) (bg of hp)
-			Transform hpbg = hotbarContainer.Find("Image (2)");
+			Transform hpbg = vitalsContainer.Find("LifeBG");
 			if (hpbg == null) { _logger.LogError("[EHB] No HP BG"); return; };
 			//bg of SP
-			Transform spbg = hotbarContainer.Find("Image (3)");
+			Transform spbg = vitalsContainer.Find("ManaBG");
 			if (spbg == null) { _logger.LogError("[EHB] No SP BG."); return; };
 
 			//the flashing thing
@@ -427,23 +443,23 @@ namespace ExtendedHotbars
 			hotbarBG = hotbarContainer.Find("Image (1)");
 			if(hotbarBG == null) { _logger.LogError("[EHB] No Hotbar BG."); return; };
 
-			Transform stSlot = hotbarContainer.Find("StatusSlots");
-			if (stSlot == null) { _logger.LogError("[EHB] No Status Slots."); return; };
+			statusBar = hotbarContainer.Find("StatusSlots");
+			if (statusBar == null) { _logger.LogError("[EHB] No Status Slots."); return; };
 
-			Transform stDrag = hotbarContainer.Find("StatusDrag");
-			if (stDrag == null) { _logger.LogError("[EHB] No Drag."); return; };
+			//Transform stDrag = hotbarContainer.Find("StatusDrag");
+			//if (stDrag == null) { _logger.LogError("[EHB] No Drag."); return; };
 
-			Transform stToggle = hotbarContainer.Find("Toggle");
-			if (stToggle == null) { _logger.LogError("[EHB] No Toggle."); return; };
+			//Transform stToggle = hotbarContainer.Find("Toggle");
+			//if (stToggle == null) { _logger.LogError("[EHB] No Toggle."); return; };
 
 			xpObjects.Add(xpbg);
 			xpObjects.Add(xptxt);
 
 			easyMoveObjects.Add(hpbg);
 			easyMoveObjects.Add(spbg);
-			easyMoveObjects.Add(stSlot);
-			easyMoveObjects.Add(stDrag);
-			easyMoveObjects.Add(stToggle);
+			//easyMoveObjects.Add(stSlot);
+			//easyMoveObjects.Add(stDrag);
+			//easyMoveObjects.Add(stToggle);
 			easyMoveObjects.Add(flash);
 
 			hasLoadedHotbar = true;
@@ -453,9 +469,10 @@ namespace ExtendedHotbars
 			{
 				_defaultPositions.Clear();
 				_defaultPositions.Add(vitalsContainer.GetInstanceID(), vitalsContainer.localPosition);
+				_defaultPositions.Add(statusBar.GetInstanceID(), statusBar.localPosition);
 				//_defaultPositions.Add(xpbg.GetInstanceID(), xpbg.position); //Get the global position for these
 				//_defaultPositions.Add(xptxt.GetInstanceID(), xptxt.position);
-				foreach(Transform t in easyMoveObjects)
+				foreach (Transform t in easyMoveObjects)
 					_defaultPositions.Add(t.GetInstanceID(), t.localPosition);
 				
 				loadedDefaults = true;
